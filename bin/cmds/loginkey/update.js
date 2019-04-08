@@ -39,6 +39,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 exports.builder = function (yargs) {
     const options = Options.getOptions({
         [Options.LOGIN_KEY] : true,
+        [Options.ACCOUNT] : false,
         [Options.PASSWORD] : false,
         [Options.DESCRIPTION] : {
             demandOption : true,
