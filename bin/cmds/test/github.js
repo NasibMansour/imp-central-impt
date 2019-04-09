@@ -40,6 +40,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.GITHUB_CONFIG] : {
             demandOption : true,
             describe : 'A path to the GitHub credentials file. A relative or absolute path can be used.'
