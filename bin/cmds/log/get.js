@@ -38,6 +38,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.DEVICE_IDENTIFIER] : {
             demandOption : false,
             describe : 'A device identifier: Device ID, MAC address, Agent ID or Device name.' +
