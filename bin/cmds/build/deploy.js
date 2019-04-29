@@ -62,6 +62,10 @@ exports.builder = function (yargs) {
         [Options.ORIGIN] : false,
         [Options.TAG] : false,
         [Options.FLAGGED] : false,
+        [Options.ALL] : {
+            demandOption : false,
+            describe : 'Run build for all device groups in project file.'
+        },
         [Options.OUTPUT] : false
     });
     return yargs

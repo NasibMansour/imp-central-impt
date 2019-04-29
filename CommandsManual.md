@@ -519,7 +519,7 @@ The user is asked to confirm the operation, unless confirmed automatically with 
 #### Build Deploy ####
 
 ```
-impt build deploy [--account <account_id>] [--dg <DEVICE_GROUP_IDENTIFIER>] [--device-file <device_file>]
+impt build deploy [--account <account_id>] [--all] [--dg <DEVICE_GROUP_IDENTIFIER>] [--device-file <device_file>]
     [--agent-file <agent_file>] [--descr <build_description>] [--origin <origin>]
     [--tag <tag>] [--flagged [true|false]] [--output <mode>] [--help]
 ```
@@ -533,6 +533,7 @@ The new build is not run until the devices are rebooted. To run it, call [`impt 
 | Option | Alias | Mandatory? | Value Required? | Description |
 | --- | --- | --- | --- | --- |
 | --account | -ac | No | Yes | The authenticated account identifier: an account ID |
+| --all | -a | No | No | Run deploy for all device groups in project file |
 | --dg | -g | Yes/[Project](#project-files) | Yes | A [Device Group identifier](#device-group-identifier). If not specified, the Device Group referenced by the [Project file](#project-files) in the current directory is used (if there is no Project file, the command fails) |
 | --device-file | -x | No | Yes | The device source code file name. If not specified, the file referenced by the [Project file](#project-files) in the current directory is used; if there is no Project file, empty code is used. If the specified file does not exist, the command fails |
 | --agent-file | -y | No | Yes | The agent source code file name. If not specified, the file referenced by the [Project file](#project-files) in the current directory is used; if there is no Project file, empty code is used. If the specified file does not exist, the command fails |
