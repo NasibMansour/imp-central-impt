@@ -42,6 +42,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.NAME] : {
             demandOption : true,
             describe : "The new Device Group's name. Must be unique among all Device Groups belonging to the specified Product.",

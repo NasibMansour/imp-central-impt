@@ -38,6 +38,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.DEVICE_GROUP_IDENTIFIER] : false,
         [Options.DEVICE_FILE] : {
             demandOption : false,
@@ -64,6 +65,10 @@ exports.builder = function (yargs) {
             describe : 'Trigger a conditional restart of the devices assigned to the specified Device Group instead of a normal restart.'
         },
         [Options.LOG] : false,
+        [Options.ALL] : {
+            demandOption : false,
+            describe : 'Run build for all device groups in project file.'
+        },
         [Options.OUTPUT] : false
     });
     return yargs

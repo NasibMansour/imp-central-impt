@@ -40,6 +40,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.DEVICE_GROUP_IDENTIFIER] : false,
         [Options.DEVICE_FILE] : {
             demandOption : false,
@@ -61,6 +62,10 @@ exports.builder = function (yargs) {
         [Options.ORIGIN] : false,
         [Options.TAG] : false,
         [Options.FLAGGED] : false,
+        [Options.ALL] : {
+            demandOption : false,
+            describe : 'Run build for all device groups in project file.'
+        },
         [Options.OUTPUT] : false
     });
     return yargs

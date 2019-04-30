@@ -38,6 +38,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.BUILD_IDENTIFIER] : {
             demandOption : true,
             describe : 'A Build identifier: Deployment ID, SHA, Tag or Origin.'

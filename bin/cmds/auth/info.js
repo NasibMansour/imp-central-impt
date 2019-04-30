@@ -38,6 +38,11 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
+        [Options.ALL] : {
+            demandOption : false,
+            describe : 'Show info of all authenticated accounts.'
+        },
         [Options.OUTPUT] : false
     });
     return yargs
