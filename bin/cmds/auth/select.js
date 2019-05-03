@@ -24,13 +24,15 @@
 
 'use strict';
 
-const Device = require('../../../lib/Device');
+const Auth = require('../../../lib/Auth');
 const Options = require('../../../lib/util/Options');
+const Errors = require('../../../lib/util/Errors');
+const UserInteractor = require('../../../lib/util/UserInteractor');
 
-const COMMAND = 'restart';
-const COMMAND_SECTION = 'device';
-const COMMAND_SHORT_DESCR = 'Reboots the specified device.';
-const COMMAND_DESCRIPTION = 'Reboots the specified device and, optionally, starts displaying logs from it.';
+const COMMAND = 'select';
+const COMMAND_SECTION = 'auth';
+const COMMAND_SHORT_DESCR = 'Changes default auth account.';
+const COMMAND_DESCRIPTION = COMMAND_SHORT_DESCR;
 
 exports.command = COMMAND;
 
@@ -38,16 +40,11 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.LOCAL] : false,
         [Options.ACCOUNT] : false,
-        [Options.DEVICE_IDENTIFIER] : true,
-        [Options.CONDITIONAL] : false,
-        [Options.LOG] : {
-            demandOption : false,
-            describe : 'Start displaying logs from the specified device (see impt log stream command description).' +
-                ' To stop displaying the logs press <Ctrl-C>.'
-        },
         [Options.OUTPUT] : false
     });
+
     return yargs
         .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
         .options(options)
@@ -59,5 +56,5 @@ exports.builder = function (yargs) {
 
 exports.handler = function (argv) {
     const options = new Options(argv);
-    new Device(options).restart(options);
+    new Auth(options).select(options);
 };

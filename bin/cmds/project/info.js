@@ -40,6 +40,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.FULL] : {
             demandOption : false,
             describe : 'Displays additional information: full details about the corresponding Device Group' +

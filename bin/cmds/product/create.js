@@ -38,6 +38,7 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
+        [Options.ACCOUNT] : false,
         [Options.NAME] : {
             demandOption : true,
             describe : "The Product's name. Must be unique among all of the current account's Products.",
