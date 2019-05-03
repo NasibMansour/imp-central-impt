@@ -24,13 +24,15 @@
 
 'use strict';
 
-const Build = require('../../../lib/Build');
+const Auth = require('../../../lib/Auth');
 const Options = require('../../../lib/util/Options');
+const Errors = require('../../../lib/util/Errors');
+const UserInteractor = require('../../../lib/util/UserInteractor');
 
-const COMMAND = 'run';
-const COMMAND_SECTION = 'build';
-const COMMAND_SHORT_DESCR = 'Creates, deploys and runs a build.';
-const COMMAND_DESCRIPTION = 'Creates, deploys and runs a build (Deployment). Optionally, displays logs of the running build.';
+const COMMAND = 'github';
+const COMMAND_SECTION = 'auth';
+const COMMAND_SHORT_DESCR = 'Adds GitHub credentials to auth file.';
+const COMMAND_DESCRIPTION = COMMAND_SHORT_DESCR;
 
 exports.command = COMMAND;
 
@@ -38,36 +40,16 @@ exports.describe = COMMAND_SHORT_DESCR;
 
 exports.builder = function (yargs) {
     const options = Options.getOptions({
-        [Options.ACCOUNT] : false,
-        [Options.DEVICE_GROUP_IDENTIFIER] : false,
-        [Options.DEVICE_FILE] : {
+        [Options.LOCAL] : false,
+        [Options.USER] : {
             demandOption : false,
-            describe : 'The device source code file name.' +
-                ' If not specified, the file referenced by the Project file in the current directory is used;' +
-                ' if there is no Project file, empty code is used. If the specified file does not exist, the command fails.'
+            describe : 'A GitHub account username.',
+            _usage: '<github_username>'
         },
-        [Options.AGENT_FILE] : {
+        [Options.PASSWORD] : {
             demandOption : false,
-            describe : 'The agent source code file name.' +
-                ' If not specified, the file referenced by the Project file in the current directory is used;' +
-                ' if there is no Project file, empty code is used. If the specified file does not exist, the command fails.'
-        },
-        [Options.DESCRIPTION] : {
-            demandOption : false,
-            describe : 'A description of the build (Deployment).',
-            _usage : '<build_description>'
-        },
-        [Options.ORIGIN] : false,
-        [Options.TAG] : false,
-        [Options.FLAGGED] : false,
-        [Options.CONDITIONAL] : {
-            demandOption : false,
-            describe : 'Trigger a conditional restart of the devices assigned to the specified Device Group instead of a normal restart.'
-        },
-        [Options.LOG] : false,
-        [Options.ALL] : {
-            demandOption : false,
-            describe : 'Run build for all device groups in project file.'
+            describe : 'A GitHub account password or personal access token.',
+            _usage: '<github_password>'
         },
         [Options.OUTPUT] : false
     });
@@ -75,6 +57,10 @@ exports.builder = function (yargs) {
         .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
         .options(options)
         .check(function (argv) {
+            const opts = new Options(argv);
+            if (opts.user === undefined && opts.password) {
+                return new Errors.CommandSyntaxError(UserInteractor.ERRORS.CMD_COOPERATIVE_OPTIONS, Options.PASSWORD, Options.USER);
+            }
             return Options.checkOptions(argv, options);
         })
         .strict();
@@ -82,5 +68,5 @@ exports.builder = function (yargs) {
 
 exports.handler = function (argv) {
     const options = new Options(argv);
-    new Build(options).run(options);
+    new Auth(options).github(options);
 };
