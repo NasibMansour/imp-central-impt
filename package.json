@@ -48,15 +48,15 @@
     "random-words": "^1.1.0",
     "randomstring": "^1.1.3",
     "sprintf-js": "^1.0.3",
-    "yargs": "^12.0.2"
+    "yargs": "^12.0.2",
+    "shelljs": "^0.8.3"
   },
   "scripts": {
     "test": "jasmine"
   },
   "devDependencies": {
-    "jasmine": "latest",
-    "jasmine-expect": "latest",
-    "shelljs": "latest"
+    "jasmine": "^3.4.0",
+    "jasmine-expect": "^4.0.1"
   },
   "yargs": {
     "short-option-groups": false
