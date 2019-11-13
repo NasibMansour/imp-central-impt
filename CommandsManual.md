@@ -10,6 +10,7 @@
 **[impt auth login](#auth-login)**<br />
 **[impt auth logout](#auth-logout)**<br />
 **[impt auth select](#auth-select)**<br />
+**[impt auth github](#auth-github)**<br />
 
 **[impt build cleanup](#build-cleanup)**<br />
 **[impt build copy](#build-copy)**<br />
@@ -85,6 +86,7 @@
 - [Auth Environment Variables](#auth-environment-variables)
 - [Command Execution Context](#command-execution-context)
 - [Project Files](#project-files)
+- [Secrets Files](#secrets-files)
 - [Test Configuration Files](#test-configuration-files)
 - [Command Description](#command-description)
 - [List of Aliases](#list-of-aliases)
@@ -217,6 +219,56 @@ Attributes accepted as `<BUILD_IDENTIFIER>` (in order of search):
 
 An auth file is a `.impt.auth` file. It stores authentication and other information necessary to execute *impt* commands.
 
+**Note** An Auth file may contain more than one account's auth information, and can contain github info added using [impt auth github](#auth-github).
+
+Each account's auth information contains the following:
+
+- `endpoint`: an impCentral API endpoint (the API base URL).
+- `profileType`: "impCentral" or "github"
+- `accessToken`: Account's access token.
+- `expiresAt`: Expiration time mof the access token.
+- `loginKey`: login key for the account.
+- `userName`
+- `accounts`: an array of all accounts that can be accessed by this account.
+- `isDefault`: Boolean flag to indicate whether this is the default account to be used with *impt* commands. It is only included in one account and can be changed using [impt auth select](#auth-select).
+
+The Auth file is of the form:
+
+```JSON
+{
+    "USER_ACCOUNT_ID1": {
+        "endpoint": "https://api.imp.eatonem.com/v5",
+        "profileType": "impCentral",
+        "accessToken": "ACCESS_TOKEN",
+        "expiresAt": "2019-08-08T15:26:25.510Z",
+        "loginKey": "LOGIN_KEY",
+        "userName": "USERNAME",
+        "accounts": [
+            "USER_ACCOUNT_ID1",
+            "SHARED_ACCOUNT_ID1"
+        ],
+        "isDefault": true
+    },
+    "USER_ACCOUNT_ID2": {
+        "endpoint": "https://api.electricimp.com/v5",
+        "profileType": "impCentral",
+        "accessToken": "ACCESS_TOKEN",
+        "expiresAt": "2019-08-08T15:26:11.370Z",
+        "loginKey": "LOGIN_KEY",
+        "userName": "USERNAME",
+        "accounts": [
+            "USER_ACCOUNT_ID1",
+            "SHARED_ACCOUNT_ID1"
+        ]
+    },
+    "GITHUB_USERNAME": {
+        "githubUser": "GITHUB_USERNAME",
+        "githubToken": "GITHUB_PASSWORD",
+        "profileType": "github"
+    }
+}
+```
+
 ### Local Auth File ###
 
 A local auth file is an auth file located in the directory from where an *impt* command is called. Different directories may contain different local auth files. One directory can contain only one local auth file. One auth file may contain multiple accounts.
@@ -274,36 +326,109 @@ Each Project file contains settings for a Project, an *impt* entity which links 
 
 A Project file may affect commands called from the directory where the file is located. Product, Device Group, Devices, Deployment, and source code files referenced by Project file may be assumed by a command when they are not specified explicitly.
 
+**Note** Currently, Builder information in the project file must be created manually.
+
+Each project file contains the following:
+
+- Global Builder information: includes `variables` which are used by all device groups, and `libs` which are `.js` files that contain some functions used by builder variables
+- Device Groups: Each device group is a key-value pair where the key is the device gorup ID and the value is an object containing the following information:
+    - `endpoint`: an impCentral API endpoint (the API base URL).
+    - `accountID`: the account ID that the device group belongs to.
+    - `deviceFile`:The device source code file name
+    - `agentFile`: The agent source code file name
+    - Local Builder information: includes `variables` which are used the specific device group, and `preBuild` and `postBuild` which are commands or `.js` files that are executed before and after building the code.
+    - `isDefault`: Boolean flag to indicate whether this is the default device group to be used . It is only included in one of device groups.
+
+The project file is of the form:
+
+```JSON
+{
+  "builder": {
+    "variables": {
+      "GLOBAL_VARIABLE_1": "someGlobalVar1",
+      "GLOBAL_VARIABLE_2": "someGlobalVar2"
+    },
+    "libs": [
+        "jslib.js",
+        "jslib2.js"
+    ]
+  },
+  "deviceGroups": {
+    "device_group_id_1": {
+      "endpoint": "https://api.electricimp.com/v5",
+      "accountID": "USER_ACCOUNT_ID",
+      "deviceFile": "device.nut",
+      "agentFile": "agent.nut",
+      "builder": {
+        "variables": {
+            "VARIABLE_1": "someVar1",
+            "VARIABLE_2": "someVar2"
+        },
+        "preBuild": [
+            "node prebuild1.js",
+            "echo 'prebuild2'"
+        ],
+        "postBuild": [
+            "echo 'postbuild1'",
+            "echo 'postbuild2'"
+        ]
+      },
+      "isDefault": true
+    },
+    "device_group_id_2": {
+      "endpoint": "https://api.electricimp.com/v5",
+      "accountID": "USER_ACCOUNT_ID",
+      "deviceFile": "device.nut",
+      "agentFile": "agent.nut",
+      "builder": {
+        "variables": {
+            "VARIABLE_1": "someVar1",
+            "VARIABLE_2": "someVar2"
+        },
+        "preBuild": [
+            "node prebuild1.js",
+            "echo 'prebuild2'"
+        ],
+        "postBuild": [
+            "echo 'postbuild1'",
+            "echo 'postbuild2'"
+        ]
+      }
+    }
+  }
+}
+```
+
 ## Secrets Files ##
 
 A Secrets file is a `.impt.project.secrets` file located in a given directory. Different directories may contain different Secrets files. A directory can contain only one Secrets file.
 
 Each Secrets file contains builder variables for information that shouldn't be tracked in GitHub. A Secrets file may contain a global builder variables object and specific builder variables associated with the device groups.
 
-**Note** Currently, the Secrets file must be cretaed manually and is of the form: 
+**Note** Currently, the Secrets file must be created manually and is of the form:
 
-```
+```JSON
 {
   "builder": {
     "variables": {
-      "global_secret_key_1": "secretglobalkeyval1",
-      "global_secret_key_2": "secretglobalkeyval2"
+      "global_secret_key_1": "secretGlobalVar1",
+      "global_secret_key_2": "secretGlobalVar2"
     }
   },
   "deviceGroups": {
     "device_group_id_1": {
       "builder": {
         "variables": {
-          "secret_key_1": "secretkeyval1",
-          "secret_key_2": "secretkeyval2"
+          "secret_key_1": "secretVar1",
+          "secret_key_2": "secretVar2"
         }
       }
     },
     "device_group_id_2": {
       "builder": {
         "variables": {
-          "secret_key_1": "secretkeyval1",
-          "secret_key_2": "secretkeyval2"
+          "secret_key_1": "secretVar1",
+          "secret_key_2": "secretVar2"
         }
       }
     }
@@ -444,6 +569,22 @@ Changes default auth account.
 | --- | --- | --- | --- | --- |
 | --local | -l | No | No | If specified, creates or replaces a [local auth file](#local-auth-file) in the current directory. If not specified, creates or replaces the [global auth file](#global-auth-file) |
 | --account | -ac | No | Yes | The authenticated account identifier: an account ID |
+| --output | -z | No | Yes | Adjusts the [command's output](#command-output) |
+| --help | -h | No | No | Displays a description of the command. Ignores any other options |
+
+#### Auth Github ####
+
+```
+impt auth github [--local] [--user <github_username>] [--pwd <github_password>] [--output <mode>] [--help]
+```
+
+Changes default auth account.
+
+| Option | Alias | Mandatory? | Value Required? | Description |
+| --- | --- | --- | --- | --- |
+| --local | -l | No | No | If specified, creates or replaces a [local auth file](#local-auth-file) in the current directory. If not specified, creates or replaces the [global auth file](#global-auth-file) |
+| --user | -u | No | Yes | a GitHub account username |
+| --pwd | -w | No | Yes | a GitHub account password or personal access token |
 | --output | -z | No | Yes | Adjusts the [command's output](#command-output) |
 | --help | -h | No | No | Displays a description of the command. Ignores any other options |
 
