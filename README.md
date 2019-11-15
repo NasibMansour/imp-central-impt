@@ -13,6 +13,8 @@ This guide covers the basic and common usage of *impt*, and should be read first
 
 *impt* is written in [Node.js](https://nodejs.org) and uses [Electric Imp’s impCentral API JavaScript library](https://github.com/electricimp/imp-central-api).
 
+**Note** Some of the commands in this file have been changed to support multiple accounts in the [Auth file](./CommandsManual.md#auth-files) and multiple device groups and in the [Project File](./CommandsManual.md#project-files). While we added some untested new features, other old features have not been re-tested.
+
 ![Build Status](https://cse-ci.electricimp.com/app/rest/builds/buildType:(id:ImpCentralImpt_BuildAndTest)/statusIcon)
 
 ## Contents ##

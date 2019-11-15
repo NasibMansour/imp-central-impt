@@ -1,5 +1,7 @@
 # impt Commands Manual #
 
+**Note** Some of the commands in this file have been changed to support multiple accounts in the [Auth file](#auth-files) and multiple device groups and in the [Project File](#project-files). While we added some untested new features, other old features have not been re-tested.
+
 ## List Of Commands ##
 
 **[impt account info](#account-info)**<br />
@@ -221,23 +223,29 @@ An auth file is a `.impt.auth` file. It stores authentication and other informat
 
 **Note** An Auth file may contain more than one account's auth information, and can contain github info added using [impt auth github](#auth-github).
 
-Each account's auth information contains the following:
+Each account's auth information contents are dependent on the `profileType`, which is one of the keys of the auth payload. Currently, the supported types are "impCentral" or "github".
 
+If the `profileType` is "impCentral", the following contents are included:
 - `endpoint`: an impCentral API endpoint (the API base URL).
-- `profileType`: "impCentral" or "github"
+- `profileType`: "impCentral"
 - `accessToken`: Account's access token.
-- `expiresAt`: Expiration time mof the access token.
+- `expiresAt`: Expiration time of the access token.
 - `loginKey`: login key for the account.
 - `userName`
 - `accounts`: an array of all accounts that can be accessed by this account.
 - `isDefault`: Boolean flag to indicate whether this is the default account to be used with *impt* commands. It is only included in one account and can be changed using [impt auth select](#auth-select).
+
+If the `profileType` is "github", the following contents are included:
+- `githubUser`: GitHub username
+- `githubToken`: GitHub password
+- `profileType`: "github"
 
 The Auth file is of the form:
 
 ```JSON
 {
     "USER_ACCOUNT_ID1": {
-        "endpoint": "https://api.imp.eatonem.com/v5",
+        "endpoint": "https://api.electricimp.com/v5",
         "profileType": "impCentral",
         "accessToken": "ACCESS_TOKEN",
         "expiresAt": "2019-08-08T15:26:25.510Z",
@@ -330,14 +338,17 @@ A Project file may affect commands called from the directory where the file is l
 
 Each project file contains the following:
 
-- Global Builder information: includes `variables` which are used by all device groups, and `libs` which are `.js` files that contain some functions used by builder variables
-- Device Groups: Each device group is a key-value pair where the key is the device gorup ID and the value is an object containing the following information:
+- Global Builder section: includes:
+    - `variables` which are used by all device groups.
+    - `libs` which are `.js` files that contain some functions used by builder variables.
+    - `preBuild` and `postBuild` which are commands or `.js` files that are executed before and after building the code.
+- Device Groups: Each device group is a key-value pair where the key is the device group ID and the value is an object containing the following information:
     - `endpoint`: an impCentral API endpoint (the API base URL).
     - `accountID`: the account ID that the device group belongs to.
     - `deviceFile`:The device source code file name
     - `agentFile`: The agent source code file name
-    - Local Builder information: includes `variables` which are used the specific device group, and `preBuild` and `postBuild` which are commands or `.js` files that are executed before and after building the code.
-    - `isDefault`: Boolean flag to indicate whether this is the default device group to be used . It is only included in one of device groups.
+    - Local Builder section: Same as the Global Builder section but are specific to a device group.
+    - `isDefault`: Boolean flag to indicate whether this is the default device group to be used. It must be included in one (and only one) of the device group entries.
 
 The project file is of the form:
 
@@ -403,7 +414,7 @@ The project file is of the form:
 
 A Secrets file is a `.impt.project.secrets` file located in a given directory. Different directories may contain different Secrets files. A directory can contain only one Secrets file.
 
-Each Secrets file contains builder variables for information that shouldn't be tracked in GitHub. A Secrets file may contain a global builder variables object and specific builder variables associated with the device groups.
+Each Secrets file contains builder variables for information that shouldn't be tracked in git. A Secrets file may contain a global builder variables object and specific builder variables associated with the device groups.
 
 **Note** Currently, the Secrets file must be created manually and is of the form:
 
