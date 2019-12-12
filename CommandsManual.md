@@ -348,6 +348,8 @@ Each project file contains the following:
     - `deviceFile`:The device source code file name
     - `agentFile`: The agent source code file name
     - Local Builder section: Same as the Global Builder section but are specific to a device group.
+        - Local Builder section also includes additional property `machine` which includes:
+            - `excludeList`: a path to the file that lists resources which should not be cached. See [Caching Remote includes](https://github.com/electricimp/Builder#caching-remote-includes)
     - `isDefault`: Boolean flag to indicate whether this is the default device group to be used. It must be included in one (and only one) of the device group entries.
 
 The project file is of the form:
