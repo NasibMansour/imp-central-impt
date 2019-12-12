@@ -377,6 +377,9 @@ The project file is of the form:
             "VARIABLE_1": "someVar1",
             "VARIABLE_2": "someVar2"
         },
+        "machine": {
+          "excludeList": "exclude-list.builder"
+        },
         "preBuild": [
             "node prebuild1.js",
             "echo 'prebuild2'"
